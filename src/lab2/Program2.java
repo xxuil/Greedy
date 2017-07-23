@@ -21,13 +21,13 @@ import java.util.*;
  */
 
 public class Program2 extends VertexNetwork {
-    /* DO NOT FORGET to add a graph representation and 
+    /* DO NOT FORGET to add a Network representation and 
        any other fields and/or methods that you think 
        will be useful. 
        DO NOT FORGET to modify the constructors when you 
        add new fields to the Program2 class. */
 
-    private HashMap<Vertex, HashMap<Vertex, Edge>> Graph;
+    private HashMap<Vertex, HashMap<Vertex, Edge>> Network;
     
     Program2() {
         super();
@@ -50,11 +50,19 @@ public class Program2 extends VertexNetwork {
         buildMap();
     }
 
+    public void setTransmissionRange(double transmissionRange) {
+        /* This method sets the transmission range to transmissionRange. */
+        /* DO NOT FORGET to recompute your graph when you change the
+           transmissionRange to a new value. */
+        this.transmissionRange = transmissionRange;
+        buildMap();
+    }
+
     private void buildMap(){
-        Graph = new HashMap<Vertex, HashMap<Vertex, Edge>>();
+        Network = new HashMap<Vertex, HashMap<Vertex, Edge>>();
 
         for(Vertex vertex : location){
-            Graph.put(vertex, new HashMap<Vertex, Edge>());
+            Network.put(vertex, new HashMap<Vertex, Edge>());
         }
 
         for(Edge edge : edges){
@@ -62,8 +70,8 @@ public class Program2 extends VertexNetwork {
             Vertex v = location.get(edge.getV());
 
             if(u.distance(v) <= transmissionRange){
-                Graph.get(u).put(v, edge);
-                Graph.get(v).put(u, edge);
+                Network.get(u).put(v, edge);
+                Network.get(v).put(u, edge);
             }
         }
     }
@@ -107,11 +115,11 @@ public class Program2 extends VertexNetwork {
     }
 
     private HashMap<Vertex, Edge> getMap(Vertex source) {
-        return Graph.get(source);
+        return Network.get(source);
     }
 
     private Vertex findNext(Vertex source, Vertex dest){
-        HashMap<Vertex, Edge> nextMap = Graph.get(source);
+        HashMap<Vertex, Edge> nextMap = Network.get(source);
         double dis = source.distance(dest);
         Vertex nextVertex = null;
 
