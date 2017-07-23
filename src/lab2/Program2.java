@@ -6,8 +6,6 @@
 package lab2;
 
 
-import javafx.scene.layout.GridPane;
-
 import java.util.*;
 
 /* Your solution goes in this file.
