@@ -72,9 +72,9 @@ public abstract class VertexNetwork {
 
         Vector<Edge> edges = new Vector<Edge>(0);
         for (int i=0; i<numPoints; i++) {
-	  for (int j=i+1; j<numPoints; j++) {
-	      edges.add(new Edge(i, j, scan.nextDouble()));
-	  }
+            for (int j=i+1; j<numPoints; j++) {
+                edges.add(new Edge(i, j, scan.nextDouble()));
+            }
         }
 
         return edges;
