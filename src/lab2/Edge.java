@@ -18,7 +18,7 @@ public class Edge {
            v-vertex to v, and weight to w */
         this.u = u;
         this.v = v;
-	this.w = w;
+	    this.w = w;
     }
     
     public void setU(int u) {
