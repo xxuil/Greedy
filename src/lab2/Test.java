@@ -10,8 +10,8 @@ public class Test {
 
     public static void main(String[] args) {
 
-        double range = 10.0;
-        String file = "80.in";
+        double range = 0.5;
+        String file = "100.in";
         boolean mode = false;
 
         //GPSR1

@@ -132,6 +132,13 @@ public class Program2 extends VertexNetwork {
         return nextVertex;
     }
 
+    /* General Dijkstra Algorithm Implementation
+     * This method takes two Vertices and find the shortest path btw them
+     * if path gets found, then this method build the path vector from sink to source
+     * and return true
+     * if mode is true, then this method will build the path base on latency
+     * if mode is false, then this method will build the path base on hops
+     */
     private boolean dijkstraMethod(Vertex source, Vertex dest, Vector<Vertex> trace, boolean mode){
         // Step 1: initialization
         HashMap<Vertex, Double> totalDistances = new HashMap<>();
@@ -200,7 +207,12 @@ public class Program2 extends VertexNetwork {
         return true;
     }
 
-
+    /* Helper method getDistance for Dijkstra implementation
+     * This method takes two Vertices and returns the distance between them
+     * if mode is true, then this method returns the weight of edge btw them
+     * if mode is false, then this method returns the distance btw them
+     * Both vertices are in the range of each other
+     */
     private double getDistance(Vertex source, Vertex dest, boolean mode){
         // if mode is true, than get latency btw source and dest
         if(mode)
@@ -221,10 +233,8 @@ public class Program2 extends VertexNetwork {
         Vertex source = location.get(sourceIndex);
         Vertex sink = location.get(sinkIndex);
         Vector<Vertex> trackPath = new Vector<>();
-        trackPath.add(source);
 
         if(dijkstraMethod(source, sink, trackPath, true)){
-            trackPath.remove(source);
             return trackPath;
         }
 
@@ -241,9 +251,8 @@ public class Program2 extends VertexNetwork {
         Vertex source = location.get(sourceIndex);
         Vertex sink = location.get(sinkIndex);
         Vector<Vertex> trackPath = new Vector<>();
-        trackPath.add(source);
+
         if(dijkstraMethod(source, sink, trackPath, false)){
-            trackPath.remove(source);
             return trackPath;
         }
 
