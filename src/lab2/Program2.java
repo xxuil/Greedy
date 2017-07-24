@@ -21,13 +21,13 @@ import java.util.*;
  */
 
 public class Program2 extends VertexNetwork {
-    /* DO NOT FORGET to add a Network representation and 
+    /* DO NOT FORGET to add a Graph representation and 
        any other fields and/or methods that you think 
        will be useful. 
        DO NOT FORGET to modify the constructors when you 
        add new fields to the Program2 class. */
 
-    private HashMap<Vertex, HashMap<Vertex, Edge>> Network;
+    private HashMap<Vertex, HashMap<Vertex, Edge>> Graph;
     
     Program2() {
         super();
@@ -59,10 +59,10 @@ public class Program2 extends VertexNetwork {
     }
 
     private void buildMap(){
-        Network = new HashMap<Vertex, HashMap<Vertex, Edge>>();
+        Graph = new HashMap<Vertex, HashMap<Vertex, Edge>>();
 
         for(Vertex vertex : location){
-            Network.put(vertex, new HashMap<Vertex, Edge>());
+            Graph.put(vertex, new HashMap<Vertex, Edge>());
         }
 
         for(Edge edge : edges){
@@ -70,8 +70,8 @@ public class Program2 extends VertexNetwork {
             Vertex v = location.get(edge.getV());
 
             if(u.distance(v) <= transmissionRange){
-                Network.get(u).put(v, edge);
-                Network.get(v).put(u, edge);
+                Graph.get(u).put(v, edge);
+                Graph.get(v).put(u, edge);
             }
         }
     }
@@ -114,12 +114,9 @@ public class Program2 extends VertexNetwork {
         return false;
     }
 
-    private HashMap<Vertex, Edge> getMap(Vertex source) {
-        return Network.get(source);
-    }
 
     private Vertex findNext(Vertex source, Vertex dest){
-        HashMap<Vertex, Edge> nextMap = Network.get(source);
+        HashMap<Vertex, Edge> nextMap = Graph.get(source);
         double dis = source.distance(dest);
         Vertex nextVertex = null;
 
@@ -134,6 +131,85 @@ public class Program2 extends VertexNetwork {
 
         return nextVertex;
     }
+
+    private boolean dijkstraMethod(Vertex source, Vertex dest, Vector<Vertex> trace, boolean mode){
+        // Step 1: initialization
+        HashMap<Vertex, Double> totalDistances = new HashMap<>();
+        HashMap<Vertex, Vertex> prevVertex = new HashMap<>();
+
+
+        for(Vertex vertex : Graph.keySet()){
+            totalDistances.put(vertex, Double.POSITIVE_INFINITY);
+            prevVertex.put(vertex, null);
+        }
+
+        totalDistances.put(source, 0.0);
+
+        //Step 2: Create the un-visted node set
+        // and intialize the array of distances
+        ArrayList<Vertex> unVisted = new ArrayList<>();
+        unVisted.addAll(location);
+
+        Vertex temp = source;
+
+        //Step 3: The main loop
+        while(!unVisted.isEmpty()){
+            Vertex next = null;
+            double dist = Double.POSITIVE_INFINITY;
+
+            for(Vertex vertex : unVisted){
+                if (totalDistances.get(vertex) < dist){
+                    next = vertex;
+                    dist = totalDistances.get(vertex);
+                }
+            }
+
+            //if distance is infinity, then break the loop
+            if(dist == Double.POSITIVE_INFINITY || next == null)
+                break;
+
+            //if distance is not infinity, remove next from Q
+            unVisted.remove(next);
+
+            //if next = dest (sink), then the path has been found
+            if(next.equals(dest))
+                break;
+
+            //for each neighbor of next
+            for(Vertex neighbor : Graph.get(next).keySet()){
+                // alt is the total distance from source to next and next to neighbor
+                double alt = totalDistances.get(next) + getDistance(next, neighbor, mode);
+
+                if(alt < totalDistances.get(neighbor)){
+                    totalDistances.put(neighbor, alt);
+                    prevVertex.put(neighbor, next);
+                }
+            }
+        }
+
+        //Step 4: build path and return;
+        temp = dest;
+
+        while(!temp.equals(source)){
+            trace.add(temp);
+            temp = prevVertex.get(temp);
+
+            if(temp == null)
+                return false;
+        }
+        return true;
+    }
+
+
+    private double getDistance(Vertex source, Vertex dest, boolean mode){
+        // if mode is true, than get latency btw source and dest
+        if(mode)
+            return Graph.get(source).get(dest).getW();
+
+        // if mode is false, then return the distance;
+        return source.distance(dest);
+    }
+
     
     public Vector<Vertex> dijkstraPathLatency(int sourceIndex, int sinkIndex) {
         /* This method returns a path (shortest in terms of latency) from a source at
@@ -142,6 +218,16 @@ public class Program2 extends VertexNetwork {
         /* The following code is meant to be a placeholder that simply 
            returns an empty path. Replace it with your own code that 
            implements Dijkstra's algorithm. */
+        Vertex source = location.get(sourceIndex);
+        Vertex sink = location.get(sinkIndex);
+        Vector<Vertex> trackPath = new Vector<>();
+        trackPath.add(source);
+
+        if(dijkstraMethod(source, sink, trackPath, true)){
+            trackPath.remove(source);
+            return trackPath;
+        }
+
         return new Vector<Vertex>(0);
     }
     
@@ -152,6 +238,15 @@ public class Program2 extends VertexNetwork {
         /* The following code is meant to be a placeholder that simply 
            returns an empty path. Replace it with your own code that 
            implements Dijkstra's algorithm. */
+        Vertex source = location.get(sourceIndex);
+        Vertex sink = location.get(sinkIndex);
+        Vector<Vertex> trackPath = new Vector<>();
+        trackPath.add(source);
+        if(dijkstraMethod(source, sink, trackPath, false)){
+            trackPath.remove(source);
+            return trackPath;
+        }
+
         return new Vector<Vertex>(0);
     }
     
